@@ -8,5 +8,6 @@ will fit on an FPGA. No peripherals are included. No pipelining has been
 implemented.
 
 # OpenLane Flow
-[here](#../picorv32a/README.md)
+
+The description of RTL to GDSII design run flow can be found [here](https://github.com/merledu/OpenLane_Workshop/blob/main/picorv32a/README.md)
 

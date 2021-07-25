@@ -58,8 +58,8 @@ The following directory structure
     |   ├── scripts
     
 
-Design are:
-1. picorv32a have a description of an Interactive flow
-2. spm have a description of Non-interactive flow
-3. manual_macro_placement_test have a description of macro placement
-4. BRISC-V_single_cycle is a task for thi workshop
+The README that comes along with the designs are: 
+1. picorv32a - a description of an Interactive flow.
+2. spm - a description of Non-interactive flow.
+3. manual_macro_placement_test - a description of macro placement.
+4. BRISC-V_single_cycle is a set of tasks for this workshop.

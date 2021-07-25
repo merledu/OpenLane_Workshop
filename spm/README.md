@@ -28,4 +28,4 @@ designs/spm
 ```
 This command run the whole design by using its own script named as ***flow.tcl***
 
-The description of RTL to GDSII design run flow 
+The description of RTL to GDSII design run flow can be found [here](https://github.com/merledu/OpenLane_Workshop/blob/main/picorv32a/README.md)
