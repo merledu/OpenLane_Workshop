@@ -207,7 +207,7 @@ detailed_routing
 
 ## Power Distribution Network
 
-````
+
 To write PDN network use command
 ```
 write_powered_verilog
