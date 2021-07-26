@@ -145,27 +145,6 @@ gen_pdn
 ```
 
 
-## Power Distribution Network
-
-````
-To write PDN network use command
-```
-write_powered_verilog
-set_netlist $::env(lvs_result_file_tag).powered.v
- ```
-
-
-Three levels of Power Distribution:
-
-**Rings** Carries VDD and VSS around the chip
-
-**Stripes** Carries VDD and VSS from Rings across the chip
-
-**Rails**
-Connect VDD and VSS to the standard cell VDD and VSS.
-
-Note: The pitch of the metal 1 power rails defines the height of the standard cells.
-Metal 4 and 5 is used as a power straps.
 
 
 
@@ -195,18 +174,13 @@ detailed_placement_or
 ```
 ## Clock tree synthesis CTS
 
-After running floorplan and standard cell placement in OpenLANE,we can perform clock-tree-synthesis.
-Two Main function are focused in CTS
 
-***Clock skew :*** Difference in arrival times of the clock for sequential elements across the design
+You can disable it by setting 
+```
+CLOCK_TREE_SYNTH to 0.
+```
 
-***Delay :*** Skew introduced through capacitive coupling of the clock tree nets
-
-CTS will helps to minimize clock-skew and clock-propagation (latency) delays for the design. CTS will inserte buffer for sequential element into the design. 
-
-
-
-
+If you don’t want all the clock ports to be used in clock tree synthesis, then you can use set CLOCK_NET to specify those ports. Otherwise, CLOCK_NET will be defaulted to the value of CLOCK_PORT.
 
 ## Routing
 Routing is comprises on three steps
@@ -230,6 +204,29 @@ run_routing comprises of these two commands:
 global_routing
 detailed_routing
 ```
+
+## Power Distribution Network
+
+````
+To write PDN network use command
+```
+write_powered_verilog
+set_netlist $::env(lvs_result_file_tag).powered.v
+ ```
+
+
+Three levels of Power Distribution:
+
+**Rings** Carries VDD and VSS around the chip
+
+**Stripes** Carries VDD and VSS from Rings across the chip
+
+**Rails**
+Connect VDD and VSS to the standard cell VDD and VSS.
+
+Note: The pitch of the metal 1 power rails defines the height of the standard cells.
+Metal 4 and 5 is used as a power straps.
+
 ## GDSII Formation and Checkers
 
 Final steps of the flow ends with GDSII file physical verification. GDSII file formed by running this command
@@ -257,6 +254,7 @@ run_magic_drc
 
 Extracted spice by magic vs  netlist(made after cts buffer) compare both file and check the simmalarity.
 ```
+puts $::env(CURRENT_NETLIST)
 run_magic_spice_export
 run_lvs
 ```

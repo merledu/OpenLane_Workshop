@@ -285,6 +285,7 @@ run_magic_drc
 
 Extracted spice by magic vs  netlist(made after cts buffer) compare both file and check the simmalarity.
 ```
+puts $::env(CURRENT_NETLIST)
 run_magic_spice_export
 run_lvs
 ```
