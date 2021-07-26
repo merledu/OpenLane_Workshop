@@ -6,9 +6,9 @@
 2. [Preparing a Design](#preparing-a-design)
 3. [Synthesis](#synthesis)
 4. [Floorplan](#floorplanning)
-5. [Placement](#placement)
-6. [Clock Tree Synthesis](#clock-tree-synthesis-cts) 
-7. [Power Distribution Network](#power-distribution-network)
+5. [Power Distribution Network](#power-distribution-network)
+6. [Placement](#placement)
+7. [Clock Tree Synthesis](#clock-tree-synthesis-cts) 
 8. [Routing](#routing)
 9. [GDSII Formation and Checkers](#gdsii-formation-and-checkers)
 
@@ -136,6 +136,39 @@ Floorplanning can be challenging in that it deals with the placement of I/O pads
 
 Floorplan invokes multiple openroad commands: ioplacer, pdn, tapcell insersion and defined core and die areas
 
+run_foorplan comprises of these two commands:
+```bash
+init_floorplan
+place_io
+tap_decap_or
+gen_pdn
+```
+
+
+## Power Distribution Network
+
+````
+To write PDN network use command
+```
+write_powered_verilog
+set_netlist $::env(lvs_result_file_tag).powered.v
+ ```
+
+
+Three levels of Power Distribution:
+
+**Rings** Carries VDD and VSS around the chip
+
+**Stripes** Carries VDD and VSS from Rings across the chip
+
+**Rails**
+Connect VDD and VSS to the standard cell VDD and VSS.
+
+Note: The pitch of the metal 1 power rails defines the height of the standard cells.
+Metal 4 and 5 is used as a power straps.
+
+
+
  ## Placement
 
 Once the floorplanning stage is satisfactory, we can now legally place the standard cells on the pre-defined site-rows. This will also ensure the standard-cell power will line up to the pdn network grids. 
@@ -172,33 +205,6 @@ Two Main function are focused in CTS
 CTS will helps to minimize clock-skew and clock-propagation (latency) delays for the design. CTS will inserte buffer for sequential element into the design. 
 
 
-
-## Power Distribution Network
-PDN rails are built post CTS in openlane flows. 
-
-
-Ensure your current DEF is pointing to CTS def.
-```
-echo ::$env(CURRENT_DEF)
-````
-To run PDN network use command
-```
-write_powered_verilog
-set_netlist $::env(lvs_result_file_tag).powered.v
- ```
-
-
-Three levels of Power Distribution:
-
-**Rings** Carries VDD and VSS around the chip
-
-**Stripes** Carries VDD and VSS from Rings across the chip
-
-**Rails**
-Connect VDD and VSS to the standard cell VDD and VSS.
-
-Note: The pitch of the metal 1 power rails defines the height of the standard cells.
-Metal 4 and 5 is used as a power straps.
 
 
 
@@ -242,7 +248,7 @@ Three Design checkers are
 2. Rule violation used by magic.
 
 ```
-run_drc
+run_magic_drc
 ```
 
 **LVS**  LVS use NETGEN tool ,comprises two process 
@@ -269,11 +275,3 @@ calc_total_runtime
 ```
 generate_final_summary_report
 ```
-
-
-
-
-
-
-
-

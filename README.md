@@ -2,12 +2,9 @@
 # OpenLANE Workshop
 Welcome to OpenLANE Workshop github. Here you have access to some of the designs that are passed through the flow during the scope of this workshop. The files that come along with the designs are: 
 1. Register Transfer Level (RTL).
-2. The generated gate-level netlist.
-3. Scripts to run on OpenLane.
-4. Library Exchange Format (LEF) from < steps >.
-5. Magic files for viewing
-6. Design Exchange Format (DEF) from < steps >.
-7. Final GDSII layout.
+2. Scripts to run on OpenLane.
+3. Design Exchange Format (DEF).
+4. Final GDSII layout.
 
 ## OpenLANE_with_Google-Sky130-PDK
 
@@ -50,6 +47,7 @@ The following directory structure
     |   ├── src
     |   ├── def
     |   ├── gds
+    |   ├── macros
     |   ├── scripts
     ├── BRISC-V_single_cycle
     |   ├── src

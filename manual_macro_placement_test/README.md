@@ -8,10 +8,11 @@
 2. [Preparing a Design](#preparing-a-design)
 3. [Synthesis](#synthesis)
 4. [Floorplan](#floorplanning)
-
-5. [Placement](#placement)
-6. [Clock Tree Synthesis](#clock-tree-synthesis-cts) 
-7. [Power Distribution Network](#power-distribution-network)
+    * [Macro Placement](#macro-placement)
+    * [IO Placement and Decap Cell Insertion](#io-placement-and-decap-cell-insertion)
+5. [Power Distribution Network](#power-distribution-network)
+6. [Placement](#placement)
+7. [Clock Tree Synthesis](#clock-tree-synthesis-cts) 
 8. [Routing](#routing)
 9. [GDSII Formation and Checkers](#gdsii-formation-and-checkers)
 
@@ -28,12 +29,15 @@ designs/manual_macro_placement_test
 ├── src
 
 ```
-In the above configuration file (config.tcl), You should add the avariable according to your design's requirement. Varaible list can be found [here](https://openlane-docs.readthedocs.io/en/rtd-develop/configuration/README.html) and in src folder you have to place verilog files here.The directory structure will be look like this.
+In the above configuration file (config.tcl), You should add the avariable according to your design's requirement. Varaible list can be found [here](https://openlane-docs.readthedocs.io/en/rtd-develop/configuration/README.html) and in src folder you have to place verilog files here. Create a folder named "macros" ,places gds and lef file of macro to hardened it.The directory structure will be look like this.
 ```bash 
 designs/manual_macro_placement_test
 ├── config.tcl
 ├── src
     ├── design.v
+├── macros
+    ├── gds
+    ├── lef
 
 ```
 ## Preparing a Design
@@ -61,6 +65,9 @@ designs/picorv32a
 ├── config.tcl
 ├── src
 |   ├── picorv32a.v
+├── macros
+    ├── gds
+    ├── lef
 ├── runs
 │   ├── run1
 │   │   ├── config.tcl
@@ -143,11 +150,49 @@ add_macro_placement spm_inst_1 179.87 168.23 N
 
 manual_macro_placement f
 ```
-### IO Placement
+### IO Placement and Decap Cell Insertion
 ```
 place_io
+tap_decap_or
 ```
 This command place random ioplacement in the design
+
+## Power Distribution Network
+
+To run PDN network use command
+```
+gen_pdn
+write_powered_verilog
+set_netlist $::env(lvs_result_file_tag).powered.v
+ ```
+If your design is a core then set these variable in configuration file 
+```
+set ::env(DESIGN_IS_CORE) 1
+set ::env(FP_PDN_CORE_RING) 1
+```
+
+If your design is a macro ,that it doesn’t have a core ring. Also, prohibit the router from using metal 5 by setting the maximum routing layer to met4 (layer 5).Set these variable in configuration file 
+
+```
+set ::env(DESIGN_IS_CORE) 0
+set ::env(FP_PDN_CORE_RING) 0
+set ::env(GLB_RT_MAXLAYER) 5
+```
+
+
+
+Three levels of Power Distribution:
+
+**Rings** Carries VDD and VSS around the chip
+
+**Stripes** Carries VDD and VSS from Rings across the chip
+
+**Rails**
+Connect VDD and VSS to the standard cell VDD and VSS.
+
+Note: The pitch of the metal 1 power rails defines the height of the standard cells.
+Metal 4 and 5 is used as a power straps.
+
 
  ## Placement
 
@@ -188,49 +233,6 @@ run_cts
 CTS will helps to minimize clock-skew and clock-propagation (latency) delays for the design. CTS will insert buffer for sequential element into the design. 
 
 
-
-## Power Distribution Network
-PDN rails are built post CTS in openlane flows. 
-
-
-Ensure your current DEF is pointing to CTS def.
-```
-echo ::$env(CURRENT_DEF)
-````
-
-To run PDN network use command
-```
-gen_pdn
-write_powered_verilog
-set_netlist $::env(lvs_result_file_tag).powered.v
- ```
-If your design is a core then set these variable in configuration file 
-```
-set ::env(DESIGN_IS_CORE) 1
-set ::env(FP_PDN_CORE_RING) 1
-```
-
-If your design is a macro ,that it doesn’t have a core ring. Also, prohibit the router from using metal 5 by setting the maximum routing layer to met4 (layer 5).Set these variable in configuration file 
-
-```
-set ::env(DESIGN_IS_CORE) 0
-set ::env(FP_PDN_CORE_RING) 0
-set ::env(GLB_RT_MAXLAYER) 5
-```
-
-
-
-Three levels of Power Distribution:
-
-**Rings** Carries VDD and VSS around the chip
-
-**Stripes** Carries VDD and VSS from Rings across the chip
-
-**Rails**
-Connect VDD and VSS to the standard cell VDD and VSS.
-
-Note: The pitch of the metal 1 power rails defines the height of the standard cells.
-Metal 4 and 5 is used as a power straps.
 
 
 
