@@ -1,4 +1,6 @@
-# OpenLANE Interactive Flow of design PICORV32a
+
+
+# MACRO PLACEMENT IN OPENLANE FLOW
 
 ## Table of Contents
 
@@ -6,6 +8,8 @@
 2. [Preparing a Design](#preparing-a-design)
 3. [Synthesis](#synthesis)
 4. [Floorplan](#floorplanning)
+    * [Macro Placement](#macro-placement)
+    * [IO Placement and Decap Cell Insertion](#io-placement-and-decap-cell-insertion)
 5. [Power Distribution Network](#power-distribution-network)
 6. [Placement](#placement)
 7. [Clock Tree Synthesis](#clock-tree-synthesis-cts) 
@@ -16,21 +20,24 @@
 ## Adding a Design
 
 ```bash
-./flow.tcl -design picorv32a -init_design_config
+./flow.tcl -design manual_macro_placement_test -init_design_config
 ```
 This will create the following directory structure
 ```bash 
-designs/picorv32a
+designs/manual_macro_placement_test
 ├── config.tcl
 ├── src
 
 ```
-In the above configuration file (config.tcl), You should add the avariable according to your design's requirement. Varaible list can be found [here](https://openlane-docs.readthedocs.io/en/rtd-develop/configuration/README.html) and in src folder you have to place verilog files here.The directory structure will be look like this.
+In the above configuration file (config.tcl), You should add the avariable according to your design's requirement. Varaible list can be found [here](https://openlane-docs.readthedocs.io/en/rtd-develop/configuration/README.html) and in src folder you have to place verilog files here. Create a folder named "macros" ,places gds and lef file of macro to hardened it.The directory structure will be look like this.
 ```bash 
-designs/picorv32a
+designs/manual_macro_placement_test
 ├── config.tcl
 ├── src
-    ├── picorv32a.v
+    ├── design.v
+├── macros
+    ├── gds
+    ├── lef
 
 ```
 ## Preparing a Design
@@ -58,6 +65,9 @@ designs/picorv32a
 ├── config.tcl
 ├── src
 |   ├── picorv32a.v
+├── macros
+    ├── gds
+    ├── lef
 ├── runs
 │   ├── run1
 │   │   ├── config.tcl
@@ -129,23 +139,59 @@ TNS and WNS must be zero or any positive number, negative is not acceptable.
 
 Floorplanning is the art of any physical design to establishing the die and core size of your chip. IO ports locations, pre-place cells planning, power-distribution networks. A well and perfect floorplan leads to an ASIC design with higher performance and optimum area.
 ```bash
-run_floorplan
+init_floorplan
 ```
 Floorplanning can be challenging in that it deals with the placement of I/O pads and macros as well as power and ground structure.
+### Macro Placement
+```
+add_macro_placement spm_inst_0 5.59000 168.23 N
 
+add_macro_placement spm_inst_1 179.87 168.23 N
 
-Floorplan invokes multiple openroad commands: ioplacer, pdn, tapcell insersion and defined core and die areas
-
-run_foorplan comprises of these two commands:
-```bash
-init_floorplan
+manual_macro_placement f
+```
+### IO Placement and Decap Cell Insertion
+```
 place_io
 tap_decap_or
+```
+This command place random ioplacement in the design
+
+## Power Distribution Network
+
+To run PDN network use command
+```
 gen_pdn
+write_powered_verilog
+set_netlist $::env(lvs_result_file_tag).powered.v
+ ```
+If your design is a core then set these variable in configuration file 
+```
+set ::env(DESIGN_IS_CORE) 1
+set ::env(FP_PDN_CORE_RING) 1
+```
+
+If your design is a macro ,that it doesn’t have a core ring. Also, prohibit the router from using metal 5 by setting the maximum routing layer to met4 (layer 5).Set these variable in configuration file 
+
+```
+set ::env(DESIGN_IS_CORE) 0
+set ::env(FP_PDN_CORE_RING) 0
+set ::env(GLB_RT_MAXLAYER) 5
 ```
 
 
 
+Three levels of Power Distribution:
+
+**Rings** Carries VDD and VSS around the chip
+
+**Stripes** Carries VDD and VSS from Rings across the chip
+
+**Rails**
+Connect VDD and VSS to the standard cell VDD and VSS.
+
+Note: The pitch of the metal 1 power rails defines the height of the standard cells.
+Metal 4 and 5 is used as a power straps.
 
 
  ## Placement
@@ -173,14 +219,14 @@ global_placement_or
 detailed_placement_or
 ```
 ## Clock tree synthesis CTS
-
-
 You can disable it by setting 
 ```
 CLOCK_TREE_SYNTH to 0.
 ```
 
 If you don’t want all the clock ports to be used in clock tree synthesis, then you can use set CLOCK_NET to specify those ports. Otherwise, CLOCK_NET will be defaulted to the value of CLOCK_PORT.
+
+
 
 ## Routing
 Routing is comprises on three steps
@@ -204,29 +250,6 @@ run_routing comprises of these two commands:
 global_routing
 detailed_routing
 ```
-
-## Power Distribution Network
-
-
-To write PDN network use command
-```
-write_powered_verilog
-set_netlist $::env(lvs_result_file_tag).powered.v
- ```
-
-
-Three levels of Power Distribution:
-
-**Rings** Carries VDD and VSS around the chip
-
-**Stripes** Carries VDD and VSS from Rings across the chip
-
-**Rails**
-Connect VDD and VSS to the standard cell VDD and VSS.
-
-Note: The pitch of the metal 1 power rails defines the height of the standard cells.
-Metal 4 and 5 is used as a power straps.
-
 ## GDSII Formation and Checkers
 
 Final steps of the flow ends with GDSII file physical verification. GDSII file formed by running this command
@@ -273,3 +296,11 @@ calc_total_runtime
 ```
 generate_final_summary_report
 ```
+
+
+
+
+
+
+
+
