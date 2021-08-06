@@ -63,4 +63,4 @@ The README that comes along with the designs are:
 3. manual_macro_placement_test - a description of macro placement.
 4. BRISC-V_single_cycle is a set of tasks for this workshop.
 
-The manuals for this workshop for each days session can be found [here](https://github.com/merledu/OpenLane_Workshop/tree/main/docs)
+The manuals for this workshop for each day's session can be found [here](https://github.com/merledu/OpenLane_Workshop/tree/main/docs)
