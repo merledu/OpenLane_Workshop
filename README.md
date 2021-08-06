@@ -36,25 +36,30 @@ The following directory structure
     ├── picorv32a
     |   ├── src
     |   ├── def
+    |   ├── lef
     |   ├── gds
     |   ├── scripts
     ├── reports
     ├── spm
     |   ├── src
     |   ├── def
+    |   ├── lef
     |   ├── gds
     |   ├── scripts
     ├──manual_macro_placement_test
     |   ├── src
     |   ├── def
+    |   ├── lef
     |   ├── gds
     |   ├── macros
     |   ├── scripts
     ├── BRISC-V_single_cycle
     |   ├── src
     |   ├── def
+    |   ├── lef
     |   ├── gds
     |   ├── scripts
+    ├── docs
     
 
 The README that comes along with the designs are: 
